@@ -5,8 +5,9 @@
  */
 package io.github.kartoffelx86.Markdown;
 
+import io.github.kartoffelx86.Markdown.extensions.Extension;
+import io.github.kartoffelx86.Markdown.extensions.SmartyPants;
 import java.util.ArrayList;
-import java.util.List;
 import org.python.util.PythonInterpreter;
 
 /**
@@ -20,7 +21,7 @@ public class Markdown {
     private OutputFormat output = OutputFormat.xhtml1;
     private boolean lazy_ol = true;
     private int tab_length = 4;
-    private ArrayList<Extensions> extensions = null;
+    private ArrayList<Extension> extensions = new ArrayList<>();
 
     public Markdown() {
         py = new PythonInterpreter();
@@ -39,18 +40,37 @@ public class Markdown {
         String value = null;
         py.exec("import markdown");
         String args = prepareArgs();
-        value = py.eval("markdown.markdown('" + text + "'" + args + ")").asString();
-
+        String config = prepareConfig();
+        String evalString = "markdown.markdown('" + text + "'" + args + ", " + config + ")";
+        value = py.eval(evalString).asString();
         return value;
+    }
+
+    private String prepareConfig() {
+        String config = "";
+        config += "extension_configs = {";
+        if (extensions != null) {
+            for (Extension extension : extensions) {
+                if (extension.getConfig() != null) {
+                    config += "'" + extension.getPath() + "': {";
+                    config += extension.getConfig();
+                    config += "}, ";
+                }
+            }
+        }
+        config += "}";
+        return config;
     }
 
     private String prepareArgs() {
         String args = "";
         args += (", output_format='" + output.name() + "'");
+        args += (", lazy_ol = " + (lazy_ol ? "True" : "False"));
+        args += (", tab_length = " + tab_length);
         args += (", extensions=[");
         if (extensions != null) {
-            for (Extensions extension : extensions) {
-                args += "'" + extension.path() + "', ";
+            for (Extension extension : extensions) {
+                args += "'" + extension.getPath() + "', ";
             }
         }
         args += "]";
@@ -69,8 +89,7 @@ public class Markdown {
         tab_length = length;
     }
 
-    public void setExtensions(List<Extensions> extensions) {
-        this.extensions = (ArrayList<Extensions>) extensions;
+    public void addExtensions(Extension extension) {
+        this.extensions.add(extension);
     }
-
 }

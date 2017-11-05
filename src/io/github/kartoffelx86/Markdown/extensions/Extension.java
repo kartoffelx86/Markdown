@@ -9,7 +9,7 @@ package io.github.kartoffelx86.Markdown.extensions;
  *
  * @author Julian
  */
-interface Extension {
+public interface Extension {
     public String getPath();
     public String getConfig();
 }
