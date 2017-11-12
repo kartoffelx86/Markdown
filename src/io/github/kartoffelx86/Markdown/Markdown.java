@@ -6,8 +6,13 @@
 package io.github.kartoffelx86.Markdown;
 
 import io.github.kartoffelx86.Markdown.extensions.Extension;
-import io.github.kartoffelx86.Markdown.extensions.SmartyPants;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.python.util.PythonInterpreter;
 
 /**
@@ -25,6 +30,8 @@ public class Markdown {
 
     public Markdown() {
         py = new PythonInterpreter();
+        py.exec("import markdown");
+        py.exec("md = markdown.Markdown()");
     }
 
     public Markdown(PythonInterpreter py) {
@@ -38,12 +45,43 @@ public class Markdown {
     public String markdown(String text) {
         text = text.replace("\n", "\\n");
         String value = null;
-        py.exec("import markdown");
         String args = prepareArgs();
         String config = prepareConfig();
-        String evalString = "markdown.markdown('" + text + "'" + args + ", " + config + ")";
+        py.exec("md = markdown.Markdown(" + args + ", " + config + ")");
+        String evalString = "md.convert('" + text + "')";
         value = py.eval(evalString).asString();
         return value;
+    }
+
+    public Map getMeta() throws ExtensionNotFoundException {
+        String s = null;
+        try {
+            s = py.eval("md.Meta").toString();
+        } catch (org.python.core.PyException e) {
+            throw new ExtensionNotFoundException("Extension Meta_Data not present. This is needed to return the Meta Attribute!");
+        }
+        s = s.replaceAll("u(?='.+')", "");
+        s = s.replace("'", "\"");
+        JSONParser parser = new JSONParser();
+        Object obj = null;
+        try {
+            obj = parser.parse(s);
+        } catch (ParseException ex) {
+            Logger.getLogger(Markdown.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JSONObject jsnobj = (JSONObject) obj;
+        Map map = (Map) jsnobj;
+        return map;
+    }
+
+    public String getToc() throws ExtensionNotFoundException {
+        String s = null;
+        try {
+            s = py.eval("md.toc").toString();
+        } catch (org.python.core.PyException e){
+            throw new ExtensionNotFoundException("Extension Table_Of_Contents not present. This is needed to return the TOC Attribute!");
+        }
+        return s;
     }
 
     private String prepareConfig() {
@@ -64,7 +102,7 @@ public class Markdown {
 
     private String prepareArgs() {
         String args = "";
-        args += (", output_format='" + output.name() + "'");
+        args += (" output_format ='" + output.name() + "'");
         args += (", lazy_ol = " + (lazy_ol ? "True" : "False"));
         args += (", tab_length = " + tab_length);
         args += (", extensions=[");
@@ -92,4 +130,5 @@ public class Markdown {
     public void addExtensions(Extension extension) {
         this.extensions.add(extension);
     }
+    
 }
