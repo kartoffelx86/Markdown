@@ -66,9 +66,9 @@ public class WikiLinks implements Extension {
     @Override
     public String getConfig() {
         String config = "";
-        config += "'base_url' = '" + base_url + "'";
-        config += ", 'end_url' = '" + end_url + "'";
-        config += ", 'html_class' = '" + html_class + "'";
+        config += "'base_url': '" + base_url + "'";
+        config += ", 'end_url': '" + end_url + "'";
+        config += ", 'html_class': '" + html_class + "'";
         return config;
     }
 }

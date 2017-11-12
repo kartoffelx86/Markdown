@@ -22,7 +22,7 @@ public class HeaderId implements Extension {
 
     @Override
     public String getConfig() {
-        return ("'level' = " + level + ", 'forceid' = " + (forceid ? "True" : "False") + ", 'separator' = '" + separator + "'");
+        return ("'level': " + level + ", 'forceid': " + (forceid ? "True" : "False") + ", 'separator': '" + separator + "'");
     }
 
     /**

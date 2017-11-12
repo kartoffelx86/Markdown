@@ -122,22 +122,22 @@ public class Table_Of_Contents implements Extension {
     public String getConfig() {
         String config = "";
         String val;
-        config += "'marker' = '" + marker + "'";
+        config += "'marker': '" + marker + "'";
         if (title == "") {
             val = "None";
         } else {
             val = "'" + title + "'";
         }
-        config += ", 'title' = " + val;
-        config += ", 'anchorlink' = " + getPyBoolValue(anchorlink);
+        config += ", 'title': " + val;
+        config += ", 'anchorlink': " + getPyBoolValue(anchorlink);
         if (usePermalink) {
             val = "'" + permalink + "'";
         } else {
             val = "False";
         }
-        config += ", 'permalink' = " + val;
-        config += ", 'baselevel' = " + baselevel;
-        config += ", 'separator' = '" + separator + "'";
+        config += ", 'permalink': " + val;
+        config += ", 'baselevel': " + baselevel;
+        config += ", 'separator': '" + separator + "'";
         return config;
     }
 }

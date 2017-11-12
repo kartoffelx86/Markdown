@@ -23,7 +23,7 @@
 //    Smart_Strong("markdown.extensions.smart_strong"),
 //    Admonition("markdown.extensions.admonition"),
 //    HeaderId("markdown.extensions.codehilite"),
-//    // TODO : Meta_Data("markdown.extensions.meta"),
+//    Meta_Data("markdown.extensions.meta"),
 //    New_Line_to_Break("markdown.extensions.nl2br"),
 //    Sane_Lists("markdown.extensions.sane_lists"),
 //    SmartyPants("markdown.extensions.smarty"),
